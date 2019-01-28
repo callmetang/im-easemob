@@ -15,11 +15,13 @@ import com.im.test.BuildConfig;
 import com.im.test.R;
 import com.im.test.dialogs.DialogUtils;
 import com.im.test.utils.IMUtils;
+import com.im.test.utils.TimeUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ItemViewDelegate;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -33,9 +35,40 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
         addItemViewDelegate(new TextReceiveItemViewDelegate());
         addItemViewDelegate(new ImageSendItemViewDelegate());
         addItemViewDelegate(new ImageReceiveItemViewDelegate());
+        addItemViewDelegate(new TimeLineViewDelegate());
 
 
     }
+
+    /**
+     * 时间间隔
+     */
+    class TimeLineViewDelegate implements ItemViewDelegate<Message> {
+
+        @Override
+        public int getItemViewLayoutId() {
+            return R.layout.chat_time_line;
+        }
+
+        @Override
+        public boolean isForViewType(Message item, int position) {
+            return item.getType().equals(Message.Type.TXT) && IMUtils.isTimeLine(item);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final Message message, int position) {
+
+            TextView textView = holder.getView(R.id.tv_content);
+            String time = "";
+            try {
+                time = TimeUtils.longToString(message.messageTime(), TimeUtils.FORMAT_TYPE_1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            textView.setText(time);
+        }
+    }
+
 
     /**
      * 文字类型 用户本人
@@ -49,7 +82,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
         @Override
         public boolean isForViewType(Message item, int position) {
-            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.SEND);
+            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.SEND) && !IMUtils.isTimeLine(item);
         }
 
         @Override
@@ -123,7 +156,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
         @Override
         public boolean isForViewType(Message item, int position) {
-            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.RECEIVE);
+            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.RECEIVE) && !IMUtils.isTimeLine(item);
         }
 
         @Override
@@ -159,7 +192,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
             ImageView ivContent = holder.getView(R.id.iv_content);
             ImageView ivFail = holder.getView(R.id.iv_fail);
 
-            TextView  mTvProgress = (TextView) holder.getView(R.id.tv_progress);
+            TextView mTvProgress = (TextView) holder.getView(R.id.tv_progress);
 
 
             int progress = message.getProgress();
@@ -172,7 +205,8 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
             EMImageMessageBody emImageMessageBody = (EMImageMessageBody) message.getBody();
 
-            if (BuildConfig.DEBUG) Log.e("ImageSendItemViewDelega", "图片消息: "+emImageMessageBody.toString());
+            if (BuildConfig.DEBUG)
+                Log.e("ImageSendItemViewDelega", "图片消息: " + emImageMessageBody.toString());
 
             ImageLoader.getInstance().displayImage("file://" + emImageMessageBody.thumbnailLocalPath(), ivContent);
 
@@ -243,7 +277,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
             ImageView ivContent = holder.getView(R.id.iv_content);
             ImageView ivFail = holder.getView(R.id.iv_fail);
 
-            TextView  mTvProgress = (TextView) holder.getView(R.id.tv_progress);
+            TextView mTvProgress = (TextView) holder.getView(R.id.tv_progress);
 
 
             int progress = message.getProgress();
@@ -256,7 +290,8 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
             EMImageMessageBody emImageMessageBody = (EMImageMessageBody) message.getBody();
 
-            if (BuildConfig.DEBUG) Log.e("ImageSendItemViewDelega", "图片消息: "+emImageMessageBody.toString());
+            if (BuildConfig.DEBUG)
+                Log.e("ImageSendItemViewDelega", "图片消息: " + emImageMessageBody.toString());
 
             ImageLoader.getInstance().displayImage("file://" + emImageMessageBody.thumbnailLocalPath(), ivContent);
 

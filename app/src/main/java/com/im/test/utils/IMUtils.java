@@ -10,6 +10,7 @@ import com.hyphenate.chat.ChatManager;
 import com.hyphenate.chat.Conversation;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.Message;
+import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.helpdesk.callback.Callback;
 import com.hyphenate.helpdesk.callback.ValueCallBack;
 import com.im.test.beans.MessageEvent;
@@ -328,6 +329,18 @@ public class IMUtils {
         }
 
     }
-
+    /**
+     * 是否是时间间隔消息
+     * @param item
+     * @return
+     */
+    public static boolean isTimeLine(Message item) {
+        boolean showTimeLine = false;
+        try {
+            showTimeLine = item.getBooleanAttribute("showTimeLine");
+        } catch (HyphenateException e) {
+        }
+        return showTimeLine;
+    }
 
 }

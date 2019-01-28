@@ -20,6 +20,7 @@ import com.im.test.adapters.ChatMultiItemTypeAdapter;
 import com.im.test.beans.MessageEvent;
 import com.im.test.utils.IMUtils;
 import com.im.test.utils.ImageUtils;
+import com.im.test.utils.TimeUtils;
 import com.im.test.views.InputMessageView;
 import com.im.test.views.MenuOpenStatusCallback;
 import com.im.test.views.SendCallback;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setTitle("当前登录用户: " + IMUtils.SELF_ID);
 
         mInputMessageView = (InputMessageView) findViewById(R.id.input_message_view);
         mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
@@ -195,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
                     chatMessages.clear();
                     chatMessages.addAll(messages);
 
+                    addTimeLine();
+
                     chatMultiItemTypeAdapter.notifyDataSetChanged();
 
                     mRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
@@ -227,6 +231,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+                    addTimeLine();
+
                     chatMultiItemTypeAdapter.notifyDataSetChanged();
                     if (size > 0) {
                         mRecyclerView.smoothScrollToPosition(size - 1);
@@ -250,6 +256,54 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    /**
+     * 两条消息之间时间间隔大于5分钟显示该消息的时间
+     * <p>
+     * 实现时间间隔的显示
+     * 最好的做法是ChatMultiItemTypeAdapter 自定义类型 这里偷懒使用ChatMultiItemTypeAdapter<Message>
+     */
+    private void addTimeLine() {
+        if (chatMessages != null && chatMultiItemTypeAdapter != null) {
+
+            //刷新之前清空时间线
+
+            for (Message msg : chatMessages) {
+                Log.d("MainActivity", "msg:" + msg.toString());
+                if (IMUtils.isTimeLine(msg)) {
+                    chatMessages.remove(msg);
+                }
+            }
+
+            int size = chatMessages.size() - 1;
+
+            for (int i = 0; i < size; i++) {
+
+                Message message1 = chatMessages.get(i);
+                Message message2 = chatMessages.get(i + 1);
+
+
+                long diff = TimeUtils.diff(message2.messageTime(), message1.messageTime());
+
+                if (diff >= 5) {
+                    Message message = Message.createTxtSendMessage("", "");
+                    message.setMessageTime(message2.messageTime());
+                    //实现时间间隔的显示
+                    //最好的做法是ChatMultiItemTypeAdapter 自定义类型 这里偷懒使用ChatMultiItemTypeAdapter<Message>
+                    message.setAttribute("showTimeLine", true);
+
+                    chatMessages.add(i + 1, message);
+                }
+
+                if (BuildConfig.DEBUG)
+                    Log.d("MainActivity", i + " message1:" + message1.toString());
+                if (BuildConfig.DEBUG)
+                    Log.d("MainActivity", i + " message2:" + message2.toString());
+            }
+
+
+        }
     }
 
 
