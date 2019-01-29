@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.hyphenate.chat.Message;
 import com.im.test.adapters.ChatMultiItemTypeAdapter;
 import com.im.test.beans.MessageEvent;
-import com.im.test.utils.IMUtils;
+import com.im.test.utils.ImUtils;
 import com.im.test.utils.ImageUtils;
 import com.im.test.utils.TimeUtils;
 import com.im.test.views.InputMessageView;
@@ -35,6 +35,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * @author a
+ */
 public class MainActivity extends AppCompatActivity {
 
     private InputMessageView mInputMessageView;
@@ -50,14 +53,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("当前登录用户: " + IMUtils.SELF_ID);
+        setTitle("当前登录用户: " + ImUtils.SELF_ID);
 
         mInputMessageView = (InputMessageView) findViewById(R.id.input_message_view);
         mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        IMUtils.isLoggedInBefore(this);
+        ImUtils.isLoggedInBefore(this);
 
         mInputMessageView.setSendCallback(new SendCallback() {
             @Override
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "消息为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                IMUtils.createTxtSendMessage(MainActivity.this, text, IMUtils.KEFU_ID);
+                ImUtils.createTxtSendMessage(MainActivity.this, text, ImUtils.KEFU_ID);
 
                 editText.setText("");
             }
@@ -80,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 if (chatMessages != null && chatMessages.size() > 0) {
-                    String startMsgId = chatMessages.get(0).getMsgId();
+                    String startMsgId = chatMessages.get(0).messageId();
                     Log.e("MainActivity", "startMsgId: " + startMsgId);
-                    IMUtils.loadMessagesByStartMsgId(startMsgId);
+                    ImUtils.loadMessagesByStartMsgId(startMsgId);
                 }
             }
         });
@@ -91,25 +94,22 @@ public class MainActivity extends AppCompatActivity {
         mInputMessageView.setPictureListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent();
-//                intent.setAction(Intent.ACTION_GET_CONTENT);
-//                intent.setType("image/*");
-
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_PICK);
                 intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 222);
+                startActivityForResult(intent, REQUEST_CODE_SELECT_PICK);
 
             }
         });
 
     }
+    private static final int REQUEST_CODE_SELECT_PICK = 222;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 222 && data != null) {
+        if (requestCode == REQUEST_CODE_SELECT_PICK && data != null) {
             Uri imageUri = data.getData();
             File file = ImageUtils.getFileByUri(imageUri, MainActivity.this);
             if (file != null) {
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 String path = file.getAbsolutePath();
                 Log.e("TAG", path);
                 if (imageUri != null) {
-                    IMUtils.createImageSendMessage(MainActivity.this, path, false, IMUtils.KEFU_ID);
+                    ImUtils.createImageSendMessage(MainActivity.this, path, false, ImUtils.KEFU_ID);
                 }
             }
         }
@@ -151,7 +151,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void open() {
 
-                if (BuildConfig.DEBUG) Log.d("MainActivity", "open");
+                if (BuildConfig.DEBUG) {
+                    Log.d("MainActivity", "open");
+                }
                 if (chatMessages != null && chatMessages.size() > 0) {
                     mRecyclerView.scrollToPosition(chatMessages.size() - 1);
                 }
@@ -159,7 +161,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void close() {
-                if (BuildConfig.DEBUG) Log.d("MainActivity", "close");
+                if (BuildConfig.DEBUG) {
+                    Log.d("MainActivity", "close");
+                }
             }
         });
     }
@@ -173,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        IMUtils.getAllMessages();
+        ImUtils.getAllMessages();
     }
 
 
@@ -205,12 +209,12 @@ public class MainActivity extends AppCompatActivity {
 
 
                     for (Message msg : chatMessages) {
-                        Log.e("chatMessages", "消息列表: " + msg.toString() + "\n消息id: " + msg.getMsgId());
+                        Log.e("chatMessages", "消息列表: " + msg.toString() + "\n消息id: " + msg.messageId());
                     }
                 }
                 break;
             case 1001:
-                IMUtils.getAllMessages();
+                ImUtils.getAllMessages();
                 break;
             case 1002:
                 Toast.makeText(this, "刷新成功", Toast.LENGTH_SHORT).show();
@@ -227,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                     Collections.sort(chatMessages, new Comparator<Message>() {
                         @Override
                         public int compare(Message lhs, Message rhs) {
-                            return (int) (lhs.getMsgTime() - rhs.getMsgTime());
+                            return (int) (lhs.messageTime() - rhs.messageTime());
                         }
                     });
 
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (message != null) {
                     for (Message msg : chatMessages) {
-                        if (msg.getMsgId().equals(message.getMsgId())) {
+                        if (msg.messageId().equals(message.messageId())) {
                             msg.setProgress(message.getProgress());
                         }
                     }
@@ -254,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                     chatMultiItemTypeAdapter.notifyDataSetChanged();
                 }
                 break;
+            default:
         }
 
     }
@@ -271,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
 
             for (Message msg : chatMessages) {
                 Log.d("MainActivity", "msg:" + msg.toString());
-                if (IMUtils.isTimeLine(msg)) {
+                if (ImUtils.isTimeLine(msg)) {
                     chatMessages.remove(msg);
                 }
             }
@@ -296,10 +301,14 @@ public class MainActivity extends AppCompatActivity {
                     chatMessages.add(i + 1, message);
                 }
 
-                if (BuildConfig.DEBUG)
+                if (BuildConfig.DEBUG){
+
                     Log.d("MainActivity", i + " message1:" + message1.toString());
-                if (BuildConfig.DEBUG)
+                }
+                if (BuildConfig.DEBUG){
+
                     Log.d("MainActivity", i + " message2:" + message2.toString());
+                }
             }
 
 

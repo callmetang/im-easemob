@@ -4,7 +4,9 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 /**
- * Created by a on 2019/1/28.
+ *
+ * @author tangdehao
+ * @date 2019/1/28
  */
 
 public class AnimationUtil {

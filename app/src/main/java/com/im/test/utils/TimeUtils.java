@@ -9,7 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by a on 2019/1/28.
+ *
+ * @author a
+ * @date 2019/1/28
  */
 
 public class TimeUtils {
@@ -18,24 +20,41 @@ public class TimeUtils {
     public static final String FORMAT_TYPE_3 = "yy-MM-dd";
     public static final String FORMAT_TYPE_4 = "yyyyMMddHHmmss";
 
-    // formatType格式为yyyy-MM-dd HH:mm:ss//yyyy年MM月dd日 HH时mm分ss秒
-    // data Date类型的时间
+    /**
+     * formatType格式为yyyy-MM-dd HH:mm:ss//yyyy年MM月dd日 HH时mm分ss秒
+     *
+     * @param data data Date类型的时间
+     * @param formatType
+     * @return
+     */
     public static String dateToString(Date data, String formatType) {
         return new SimpleDateFormat(formatType).format(data);
     }
-    // currentTime要转换的long类型的时间
 
-    // formatType要转换的string类型的时间格式
+    /**
+     * formatType要转换的string类型的时间格式
+     * @param currentTime currentTime要转换的long类型的时间
+     * @param formatType
+     * @return
+     * @throws ParseException
+     */
     public static String longToString(long currentTime, String formatType)
             throws ParseException {
-        Date date = longToDate(currentTime, formatType); // long类型转成Date类型
-        String strTime = dateToString(date, formatType); // date类型转成String
+        // long类型转成Date类型
+        Date date = longToDate(currentTime, formatType);
+        // date类型转成String
+        String strTime = dateToString(date, formatType);
         return strTime;
     }
 
-    // strTime要转换的string类型的时间，formatType要转换的格式yyyy-MM-dd HH:mm:ss//yyyy年MM月dd日
-    // HH时mm分ss秒，
-    // strTime的时间格式必须要与formatType的时间格式相同
+    /**
+     * strTime的时间格式必须要与formatType的时间格式相同
+     *
+     * @param strTime strTime要转换的string类型的时间，formatType要转换的格式yyyy-MM-dd HH:mm:ss//yyyy年MM月dd日
+     * @param formatType HH时mm分ss秒，
+     * @return
+     * @throws ParseException
+     */
     public static Date stringToDate(String strTime, String formatType)
             throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat(formatType);
@@ -44,13 +63,21 @@ public class TimeUtils {
         return date;
     }
 
-    // currentTime要转换的long类型的时间
-    // formatType要转换的时间格式yyyy-MM-dd HH:mm:ss//yyyy年MM月dd日 HH时mm分ss秒
+    /**
+     *
+     * @param currentTime currentTime要转换的long类型的时间
+     * @param formatType formatType要转换的时间格式yyyy-MM-dd HH:mm:ss//yyyy年MM月dd日 HH时mm分ss秒
+     * @return
+     * @throws ParseException
+     */
     public static Date longToDate(long currentTime, String formatType)
             throws ParseException {
-        Date dateOld = new Date(currentTime); // 根据long类型的毫秒数生命一个date类型的时间
-        String sDateTime = dateToString(dateOld, formatType); // 把date类型的时间转换为string
-        Date date = stringToDate(sDateTime, formatType); // 把String类型转换为Date类型
+        // 根据long类型的毫秒数生命一个date类型的时间
+        Date dateOld = new Date(currentTime);
+        // 把date类型的时间转换为string
+        String sDateTime = dateToString(dateOld, formatType);
+        // 把String类型转换为Date类型
+        Date date = stringToDate(sDateTime, formatType);
         return date;
     }
 
@@ -84,7 +111,9 @@ public class TimeUtils {
                 }
             }
         }
-        if (BuildConfig.DEBUG) Log.d("TimeUtils", day + "天" + hour + "小时" + min + "分" + s + "秒");
+        if (BuildConfig.DEBUG){
+            Log.d("TimeUtils", day + "天" + hour + "小时" + min + "分" + s + "秒");
+        }
         return str;
     }
 
@@ -97,7 +126,9 @@ public class TimeUtils {
         long min = ((diff / (60 * 1000)) - day * 24 * 60 - hour * 60);
         long s = (diff / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
 
-        if (BuildConfig.DEBUG) Log.d("TimeUtils", day + "天" + hour + "小时" + min + "分" + s + "秒");
+        if (BuildConfig.DEBUG){
+            Log.d("TimeUtils", day + "天" + hour + "小时" + min + "分" + s + "秒");
+        }
         return min;
     }
 }

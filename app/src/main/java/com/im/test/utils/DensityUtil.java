@@ -3,6 +3,9 @@ package com.im.test.utils;
 import android.content.Context;
 
 
+/**
+ * @author a
+ */
 public class DensityUtil {
 
     /**
@@ -20,4 +23,4 @@ public class DensityUtil {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
-}//end class
+}

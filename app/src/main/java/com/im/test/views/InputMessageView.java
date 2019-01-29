@@ -21,7 +21,9 @@ import com.im.test.utils.DensityUtil;
 import com.im.test.utils.KeyBoardUtils;
 
 /**
- * Created by a on 2019/1/28.
+ *
+ * @author a
+ * @date 2019/1/28
  */
 
 public class InputMessageView extends FrameLayout {
@@ -115,9 +117,12 @@ public class InputMessageView extends FrameLayout {
         mIvAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+
                 showExtendAnim();
 
-                KeyBoardUtils.closeKeybord(mEdInput, mContext);
+                KeyBoardUtils.closeKeyboard(mEdInput, mContext);
 
                 mLayoutExtend.setVisibility(VISIBLE);
                 mLayoutAdd.setVisibility(VISIBLE);
@@ -133,7 +138,7 @@ public class InputMessageView extends FrameLayout {
 
                 showExtendAnim();
 
-                KeyBoardUtils.closeKeybord(mEdInput, mContext);
+                KeyBoardUtils.closeKeyboard(mEdInput, mContext);
                 mLayoutExtend.setVisibility(VISIBLE);
                 mLayoutAdd.setVisibility(GONE);
                 mLayoutSmile.setVisibility(VISIBLE);
@@ -206,8 +211,10 @@ public class InputMessageView extends FrameLayout {
                     int currentValue = (Integer) valueAnimator.getAnimatedValue();
                     mLayoutExtend.getLayoutParams().height = currentValue;
                     mLayoutExtend.requestLayout();
-                    if (BuildConfig.DEBUG)
+                    if (BuildConfig.DEBUG){
+
                         Log.d("InputMessageView", "currentValue:" + currentValue);
+                    }
                 }
 
 
@@ -220,8 +227,9 @@ public class InputMessageView extends FrameLayout {
      */
     private void showExtendAnim() {
 
-        if (mLayoutExtend.getVisibility() == VISIBLE)
+        if (mLayoutExtend.getVisibility() == VISIBLE){
             return;
+        }
         final int height = DensityUtil.dip2px(mContext, 120);
         ValueAnimator valueAnimator = ValueAnimator.ofInt(0, height);
         valueAnimator.setDuration(300);
@@ -245,8 +253,9 @@ public class InputMessageView extends FrameLayout {
                         }
                     }
 
-                    if (BuildConfig.DEBUG)
+                    if (BuildConfig.DEBUG){
                         Log.d("InputMessageView", "currentValue:" + currentValue);
+                    }
                 }
             }
         });

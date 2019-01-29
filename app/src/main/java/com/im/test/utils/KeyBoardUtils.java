@@ -4,7 +4,10 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-//打开或关闭软键盘
+/**
+ * @author tangdehao
+ * 打开或关闭软键盘
+ */
 public class KeyBoardUtils
 {
 	/**
@@ -13,7 +16,7 @@ public class KeyBoardUtils
 	 * @param mEditText
 	 * @param mContext
 	 */
-	public static void openKeybord(EditText mEditText, Context mContext)
+	public static void openKeyboard(EditText mEditText, Context mContext)
 	{
 		InputMethodManager imm = (InputMethodManager) mContext
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -28,7 +31,7 @@ public class KeyBoardUtils
 	 * @param mEditText
 	 * @param mContext
 	 */
-	public static void closeKeybord(EditText mEditText, Context mContext)
+	public static void closeKeyboard(EditText mEditText, Context mContext)
 	{
 		InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 

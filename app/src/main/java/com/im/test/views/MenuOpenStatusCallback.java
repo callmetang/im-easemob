@@ -1,11 +1,18 @@
 package com.im.test.views;
 
 /**
- * Created by a on 2019/1/28.
+ * @author tangdehao
+ * @date 2019/1/28
  */
 
 public interface MenuOpenStatusCallback {
+    /**
+     * 聊天底部栏打开
+     */
     void open();
 
+    /**
+     * 聊天底部栏关闭
+     */
     void close();
 }

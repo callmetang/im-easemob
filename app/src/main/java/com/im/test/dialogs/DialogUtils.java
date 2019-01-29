@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
-import com.hyphenate.chat.Message;
-import com.hyphenate.helpdesk.callback.Callback;
-import com.im.test.utils.IMUtils;
-
 /**
- * Created by a on 2019/1/28.
+ *
+ * @author a
+ * @date 2019/1/28
  */
 
 public class DialogUtils {

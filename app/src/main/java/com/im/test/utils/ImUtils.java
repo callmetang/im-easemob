@@ -8,7 +8,6 @@ import android.widget.Toast;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.ChatManager;
 import com.hyphenate.chat.Conversation;
-import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.Message;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.helpdesk.callback.Callback;
@@ -17,17 +16,23 @@ import com.im.test.beans.MessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by a on 2019/1/24.
+ *
+ * @author a
+ * @date 2019/1/24
  */
 
-public class IMUtils {
-    public static String KEFU_ID = "kefuchannelimid_012700";//客服id
-    public static String SELF_ID = "tang";//自己的id
+public class ImUtils {
+    /**
+     * 客服id
+     */
+    public static String KEFU_ID = "kefuchannelimid_012700";
+    /**
+     * 自己的id
+     */
+    public static String SELF_ID = "tang";
 
     public static void isLoggedInBefore(final Context context) {
         if (ChatClient.getInstance().isLoggedInBefore()) {
@@ -133,7 +138,7 @@ public class IMUtils {
      * 消息监听
      */
     public static void addMessageListener() {
-        ChatClient.getInstance().getChat().addMessageListener(new ChatManager.MessageListener() {
+        ChatClient.getInstance().chatManager().addMessageListener(new ChatManager.MessageListener() {
             @Override
             public void onMessage(List<Message> list) {
                 //收到普通消息
@@ -218,7 +223,6 @@ public class IMUtils {
             @Override
             public void onError(int code, String error) {
 
-//                Toast.makeText(content, error, Toast.LENGTH_SHORT).show();
 
                 Log.e("IMUtils", "文本消息发送失败code : " + code);
                 Log.e("IMUtils", "文本消息发送失败error: " + error);
@@ -245,7 +249,6 @@ public class IMUtils {
                 EventBus.getDefault().post(messageEvent);
 
                 Log.e("IMUtils", "图片消息发送成功");
-//                Toast.makeText(content, "文本消息发送成功", Toast.LENGTH_SHORT).show();
                 sendImageProgress(100,message);
 
             }
@@ -253,7 +256,6 @@ public class IMUtils {
             @Override
             public void onError(int code, String error) {
 
-//                Toast.makeText(content, error, Toast.LENGTH_SHORT).show();
 
                 Log.e("IMUtils", "图片消息发送失败code : " + code);
                 Log.e("IMUtils", "图片消息发送失败error: " + error);

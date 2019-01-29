@@ -14,7 +14,7 @@ import com.hyphenate.helpdesk.callback.Callback;
 import com.im.test.BuildConfig;
 import com.im.test.R;
 import com.im.test.dialogs.DialogUtils;
-import com.im.test.utils.IMUtils;
+import com.im.test.utils.ImUtils;
 import com.im.test.utils.TimeUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
@@ -25,7 +25,8 @@ import java.text.ParseException;
 import java.util.List;
 
 /**
- * Created by a on 2019/1/28.
+ * @author a
+ * @date 2019/1/28
  */
 
 public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
@@ -52,7 +53,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
         @Override
         public boolean isForViewType(Message item, int position) {
-            return item.getType().equals(Message.Type.TXT) && IMUtils.isTimeLine(item);
+            return item.getType().equals(Message.Type.TXT) && ImUtils.isTimeLine(item);
         }
 
         @Override
@@ -82,7 +83,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
         @Override
         public boolean isForViewType(Message item, int position) {
-            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.SEND) && !IMUtils.isTimeLine(item);
+            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.SEND) && !ImUtils.isTimeLine(item);
         }
 
         @Override
@@ -91,16 +92,15 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
             TextView textView = holder.getView(R.id.tv_content);
             ImageView ivFail = holder.getView(R.id.iv_fail);
 
-            EMTextMessageBody emTextMessageBody = (EMTextMessageBody) message.getBody();
+            EMTextMessageBody emTextMessageBody = (EMTextMessageBody) message.body();
 
             String value = emTextMessageBody.getMessage();
 
-//            value += "\n" + message.getStatus();
 
             textView.setText(value);
 
 
-            if (message.getStatus().equals(Message.Status.FAIL)) {
+            if (message.status().equals(Message.Status.FAIL)) {
                 ivFail.setVisibility(View.VISIBLE);
             } else {
                 ivFail.setVisibility(View.GONE);
@@ -117,7 +117,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
 
-                                    IMUtils.reStartMessage(message, new Callback() {
+                                    ImUtils.reStartMessage(message, new Callback() {
                                         @Override
                                         public void onSuccess() {
                                             message.setStatus(Message.Status.SUCCESS);
@@ -140,7 +140,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
                 }
             });
 
-            Log.e("TextSendItemViewDelegat", "消息状态: " + message.getStatus());
+            Log.e("TextSendItemViewDelegat", "消息状态: " + message.status());
         }
     }
 
@@ -156,7 +156,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
         @Override
         public boolean isForViewType(Message item, int position) {
-            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.RECEIVE) && !IMUtils.isTimeLine(item);
+            return item.getType().equals(Message.Type.TXT) && item.direct().equals(Message.Direct.RECEIVE) && !ImUtils.isTimeLine(item);
         }
 
         @Override
@@ -164,12 +164,15 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
             TextView textView = holder.getView(R.id.tv_content);
 
-            EMTextMessageBody emTextMessageBody = (EMTextMessageBody) message.getBody();
+            EMTextMessageBody emTextMessageBody = (EMTextMessageBody) message.body();
             String value = emTextMessageBody.getMessage();
 
             textView.setText(value);
         }
     }
+
+    private static final int PROGRESS_VALUE_START = 0;
+    private static final int PROGRESS_VALUE_END = 100;
 
     /**
      * 图片类型 客服
@@ -196,21 +199,22 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
 
             int progress = message.getProgress();
-            if (progress == 0 || progress == 100) {
+            if (progress == PROGRESS_VALUE_START || progress == PROGRESS_VALUE_END) {
                 mTvProgress.setVisibility(View.GONE);
             } else {
                 mTvProgress.setVisibility(View.VISIBLE);
                 mTvProgress.setText(message.getProgress() + "%");
             }
 
-            EMImageMessageBody emImageMessageBody = (EMImageMessageBody) message.getBody();
+            EMImageMessageBody emImageMessageBody = (EMImageMessageBody) message.body();
 
-            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG) {
                 Log.e("ImageSendItemViewDelega", "图片消息: " + emImageMessageBody.toString());
+            }
 
             ImageLoader.getInstance().displayImage("file://" + emImageMessageBody.thumbnailLocalPath(), ivContent);
 
-            if (message.getStatus().equals(Message.Status.FAIL)) {
+            if (message.status().equals(Message.Status.FAIL)) {
                 ivFail.setVisibility(View.VISIBLE);
             } else {
                 ivFail.setVisibility(View.GONE);
@@ -227,13 +231,13 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
 
-                                    IMUtils.reStartMessage(message, new Callback() {
+                                    ImUtils.reStartMessage(message, new Callback() {
                                         @Override
                                         public void onSuccess() {
                                             message.setStatus(Message.Status.SUCCESS);
                                             notifyDataSetChanged();
 
-                                            message.setProgress(100);
+                                            message.setProgress(PROGRESS_VALUE_END);
                                         }
 
                                         @Override
@@ -252,7 +256,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
                 }
             });
 
-            Log.e("TextSendItemViewDelegat", "消息状态: " + message.getStatus());
+            Log.e("TextSendItemViewDelegat", "消息状态: " + message.status());
         }
     }
 
@@ -281,21 +285,22 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
 
 
             int progress = message.getProgress();
-            if (progress == 0 || progress == 100) {
+            if (progress == PROGRESS_VALUE_START || progress == PROGRESS_VALUE_END) {
                 mTvProgress.setVisibility(View.GONE);
             } else {
                 mTvProgress.setVisibility(View.VISIBLE);
                 mTvProgress.setText(message.getProgress() + "%");
             }
 
-            EMImageMessageBody emImageMessageBody = (EMImageMessageBody) message.getBody();
+            EMImageMessageBody emImageMessageBody = (EMImageMessageBody) message.body();
 
-            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG) {
                 Log.e("ImageSendItemViewDelega", "图片消息: " + emImageMessageBody.toString());
+            }
 
             ImageLoader.getInstance().displayImage("file://" + emImageMessageBody.thumbnailLocalPath(), ivContent);
 
-            if (message.getStatus().equals(Message.Status.FAIL)) {
+            if (message.status().equals(Message.Status.FAIL)) {
                 ivFail.setVisibility(View.VISIBLE);
             } else {
                 ivFail.setVisibility(View.GONE);
@@ -312,7 +317,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
 
-                                    IMUtils.reStartMessage(message, new Callback() {
+                                    ImUtils.reStartMessage(message, new Callback() {
                                         @Override
                                         public void onSuccess() {
                                             message.setStatus(Message.Status.SUCCESS);
@@ -337,7 +342,7 @@ public class ChatMultiItemTypeAdapter extends MultiItemTypeAdapter<Message> {
                 }
             });
 
-            Log.e("TextSendItemViewDelegat", "消息状态: " + message.getStatus());
+            Log.e("TextSendItemViewDelegat", "消息状态: " + message.status());
         }
     }
 

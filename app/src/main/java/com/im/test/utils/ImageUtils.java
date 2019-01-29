@@ -10,13 +10,17 @@ import android.provider.MediaStore;
 import java.io.File;
 
 /**
- * Created by a on 2019/1/28.
+ *
+ * @author a
+ * @date 2019/1/28
  */
 
 public class ImageUtils {
+    private static final String SCHEME_FILE = "file";
+    private static final String SCHEME_CONTENT = "content";
     public static File getFileByUri(Uri uri, Context context) {
         String path = null;
-        if ("file".equals(uri.getScheme())) {
+        if (SCHEME_FILE.equals(uri.getScheme())) {
             path = uri.getEncodedPath();
             if (path != null) {
                 path = Uri.decode(path);
@@ -42,7 +46,7 @@ public class ImageUtils {
             if (path != null) {
                 return new File(path);
             }
-        } else if ("content".equals(uri.getScheme())) {
+        } else if (SCHEME_CONTENT.equals(uri.getScheme())) {
 // 4.2.2以后
             String[] proj = {MediaStore.Images.Media.DATA};
             Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
@@ -53,7 +57,6 @@ public class ImageUtils {
             cursor.close();
             return new File(path);
         } else {
-//Log.i(TAG, "Uri Scheme:" + uri.getScheme());
         }
         return null;
     }
